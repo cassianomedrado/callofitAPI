@@ -286,5 +286,51 @@ namespace callofitAPI.Security.DAO
                 return usu;
             }
         }
+
+        public async Task<bool> InativarUsuarioAsync(int id)
+        {
+            var retorno = false;
+            try
+            {
+                var usuario = (await getAllUsersAsync()).Where(u => u.id == id).FirstOrDefault();
+
+                if (usuario != null)
+                {
+                    string sqlUser = $@" UPDATE tb_usuario SET status = @status WHERE id = @id";
+
+                    var connection = getConnection();
+
+                    using (connection)
+                    {
+                        NpgsqlCommand sql = connection.CreateCommand();
+                        sql.CommandType = CommandType.Text;
+                        sql.CommandText = sqlUser;
+
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@status", false);
+                        parameters.Add("@id", usuario.id);
+
+                        connection.Open();
+
+                        using (var transaction = connection.BeginTransaction())
+                        {
+                            connection.Execute(sql.CommandText, parameters, transaction);
+                            transaction.Commit();
+                        }
+                    }
+                    retorno = true;
+                }
+                else
+                {
+                    Notificar("Usuário informado não foi encontrado.");
+                    retorno = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Notificar("Nao foi possível alterar a senha do usuário.");
+            }
+            return retorno;
+        }
     }
 }

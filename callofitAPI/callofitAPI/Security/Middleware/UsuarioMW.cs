@@ -1,4 +1,5 @@
-﻿using callofitAPI.Security.DAO;
+﻿using callofitAPI.Models;
+using callofitAPI.Security.DAO;
 using callofitAPI.Security.Models;
 using callofitAPI.Security.ViewModels;
 using callofitAPI.Util;
@@ -19,7 +20,7 @@ namespace netbullAPI.Security.MidwareDB
             return await _userDao.getAllUsersAsync();
         }
 
-        internal async Task<RetornarUserViewModel> CadastroDeUserAsync(Usuario usu)
+        public async Task<RetornarUserViewModel> CadastroDeUserAsync(Usuario usu)
         {
             usu.senha = Criptografia.HashValue(usu.senha);
 
@@ -43,15 +44,20 @@ namespace netbullAPI.Security.MidwareDB
             return verificado;
         }
 
-        internal async Task<bool> DeleteUserAsync(int id)
+        public async Task<bool> DeleteUserAsync(int id)
         {
             return await _userDao.DeleteUserAsync(id);
         }
 
-        internal async Task<bool> alterarSenhaAsync(Usuario usu)
+        public async Task<bool> alterarSenhaAsync(Usuario usu)
         {
             usu.senha = Criptografia.HashValue(usu.senha);
             return await _userDao.alterarSenhaAsync(usu);
+        }
+
+        public async Task<bool> InativarUsuarioAsync(int id)
+        {
+            return await _userDao.InativarUsuarioAsync(id);
         }
     }
 }

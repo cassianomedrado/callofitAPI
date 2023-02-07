@@ -115,7 +115,7 @@ namespace callofitAPI.Security.Controllers
                                   [FromBody] LoginUserViewModel viewModel)
         {
             if (!ModelState.IsValid)
-                return BadRequest(new ResultViewModel<Usuario>(ModelState.RecuperarErros()));
+                return BadRequest(new ResultViewModel<LoginUserViewModel>(ModelState.RecuperarErros()));
 
             try
             {
@@ -207,14 +207,14 @@ namespace callofitAPI.Security.Controllers
         /// Alterar senha de um usuário.
         /// </summary>
         /// <param name="mwUser"></param>
-        /// <param name="id"></param>
+        /// <param name="viewModel"></param>
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPatch("alterarSenha")]
         public async Task<IActionResult> AlterarSenhaAsync([FromServices] UsuarioMW mwUser, [FromBody] AlterarUserSenhaViewModel viewModel)
         {
             if (!ModelState.IsValid)
-                return BadRequest(new ResultViewModel<Usuario>(ModelState.RecuperarErros()));
+                return BadRequest(new ResultViewModel<AlterarUserSenhaViewModel>(ModelState.RecuperarErros()));
 
             try
             {
@@ -246,6 +246,41 @@ namespace callofitAPI.Security.Controllers
             {
                 Notificar("Falha ao alterar senha do usuário.");
                 return BadRequest(Notificacoes());
+            }
+        }
+
+        /// <summary>
+        /// Inativa um usuário do sistema passando o ID.
+        /// </summary>
+        /// <param name="mwUser"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost("inativar/{id}")]
+        public async Task<IActionResult> InativarUserAsync([FromServices] UsuarioMW mwUser, int id)
+        {
+            try
+            {
+                var sucess = await mwUser.InativarUsuarioAsync(id);
+
+                if (!sucess)
+                {
+                    return NotFound(
+                       new
+                       {
+                           status = HttpStatusCode.NotFound,
+                           Error = Notificacoes()
+                       });
+                }
+                else
+                {
+                    return Ok();
+                }
+            }
+            catch (Exception ex)
+            {
+                Notificar("Falha ao iantivar usuário.");
+                return StatusCode(500, Notificacoes());
             }
         }
     }

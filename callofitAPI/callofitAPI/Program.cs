@@ -66,10 +66,12 @@ builder.Services.AddAuthentication(authOptions =>
 });
 
 // INJEÇÃO DE DEPENDENCIAS
+builder.Services.AddScoped<TipoUsuarioMW>(); 
 builder.Services.AddScoped<UsuarioMW>();
-builder.Services.AddScoped<INotificador, NotificadorMW>(); // Por Requisição
+builder.Services.AddScoped<INotificador, NotificadorMW>();
+builder.Services.AddTransient<TipoUsuarioDAO>();
 builder.Services.AddTransient<UsuarioDAO>();
-builder.Services.AddTransient<TokenService>(); // Por método
+builder.Services.AddTransient<TokenService>();
 
 var app = builder.Build();
 
