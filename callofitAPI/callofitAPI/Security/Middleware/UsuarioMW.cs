@@ -1,5 +1,4 @@
-﻿using callofitAPI.Models;
-using callofitAPI.Security.DAO;
+﻿using callofitAPI.Security.DAO;
 using callofitAPI.Security.Models;
 using callofitAPI.Security.ViewModels;
 using callofitAPI.Util;

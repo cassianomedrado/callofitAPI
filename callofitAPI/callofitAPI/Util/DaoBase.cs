@@ -1,5 +1,4 @@
 ﻿using callofitAPI.Interfaces;
-using callofitAPI.Util;
 using Npgsql;
 
 namespace callofitAPI.Util

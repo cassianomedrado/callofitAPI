@@ -1,13 +1,9 @@
 ﻿using Dapper;
 using callofitAPI.Util;
 using callofitAPI.Interfaces;
-using callofitAPI.Security.Models;
 using Npgsql;
-using NpgsqlTypes;
 using System.Data;
 using callofitAPI.Models;
-using netbullAPI.Security.MidwareDB;
-using callofitAPI.Security.ViewModels;
 
 namespace callofitAPI.Security.DAO
 {
@@ -38,7 +34,7 @@ namespace callofitAPI.Security.DAO
                     }
                 }
 
-                if (tiposUsuarios == null)
+                if (tiposUsuarios == null || tiposUsuarios.Count() == 0 )
                 {
                     Notificar("Não existem tipos de usuários cadastrados.");
                 }
@@ -74,7 +70,7 @@ namespace callofitAPI.Security.DAO
 
                     using (var transaction = connection.BeginTransaction())
                     {
-                        tipoUsuario = await connection.QueryFirstAsync<TipoUsuarioModel>(sql.CommandText, parameters, transaction);
+                        tipoUsuario = await connection.QueryFirstOrDefaultAsync<TipoUsuarioModel>(sql.CommandText, parameters, transaction);
                         transaction.Commit();
                     }
                 }
@@ -140,39 +136,32 @@ namespace callofitAPI.Security.DAO
             try
             {
                 var tipoUsuarioExistente = await getTipoUsuarioPorIdAsync(tipoUsuario.id);
+                if (Notificacoes().Count > 0)
+                    return retorno;
+         
+                string sqlUser = $@" UPDATE tb_tipo_usuario SET descricao = @descricao WHERE id = @id";
 
-                if (tipoUsuarioExistente != null)
-                {           
-                    string sqlUser = $@" UPDATE tb_tipo_usuario SET descricao = @descricao WHERE id = @id";
+                var connection = getConnection();
 
-                    var connection = getConnection();
-
-                    using (connection)
-                    {
-                        NpgsqlCommand sql = connection.CreateCommand();
-                        sql.CommandType = CommandType.Text;
-                        sql.CommandText = sqlUser;
-
-                        var parameters = new DynamicParameters();
-                        parameters.Add("@descricao", tipoUsuario.descricao);
-                        parameters.Add("@id", tipoUsuario.id);
-
-                        connection.Open();
-
-                        using (var transaction = connection.BeginTransaction())
-                        {
-                            connection.Execute(sql.CommandText, parameters, transaction);
-                            transaction.Commit();
-                        }
-                    }
-                    retorno = true;
-     
-                }
-                else
+                using (connection)
                 {
-                    Notificar("Tipo usuário informado não foi encontrado.");
-                    retorno = false;
+                    NpgsqlCommand sql = connection.CreateCommand();
+                    sql.CommandType = CommandType.Text;
+                    sql.CommandText = sqlUser;
+
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@descricao", tipoUsuario.descricao);
+                    parameters.Add("@id", tipoUsuario.id);
+
+                    connection.Open();
+
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        connection.Execute(sql.CommandText, parameters, transaction);
+                        transaction.Commit();
+                    }
                 }
+                retorno = true;               
             }
             catch (Exception ex)
             {
@@ -237,38 +226,32 @@ namespace callofitAPI.Security.DAO
             try
             {
                 var tipoUsuarioExistente = await getTipoUsuarioPorIdAsync(id);
+                if (Notificacoes().Count > 0)
+                    return retorno;
 
-                if (tipoUsuarioExistente != null)
+                string sqlUser = $@" DELETE FROM tb_tipo_usuario WHERE id = @id";
+
+                var connection = getConnection();
+
+                using (connection)
                 {
-                    string sqlUser = $@" DELETE FROM tb_tipo_usuario WHERE id = @id";
+                    NpgsqlCommand sql = connection.CreateCommand();
+                    sql.CommandType = CommandType.Text;
+                    sql.CommandText = sqlUser;
 
-                    var connection = getConnection();
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id", id);
 
-                    using (connection)
+                    connection.Open();
+
+                    using (var transaction = connection.BeginTransaction())
                     {
-                        NpgsqlCommand sql = connection.CreateCommand();
-                        sql.CommandType = CommandType.Text;
-                        sql.CommandText = sqlUser;
-
-                        var parameters = new DynamicParameters();
-                        parameters.Add("@id", id);
-
-                        connection.Open();
-
-                        using (var transaction = connection.BeginTransaction())
-                        {
-                            connection.Execute(sql.CommandText, parameters, transaction);
-                            transaction.Commit();
-                        }
+                        connection.Execute(sql.CommandText, parameters, transaction);
+                        transaction.Commit();
                     }
+                }
 
-                    retorno = true;
-                }
-                else
-                {
-                    Notificar("Tipo usuário informado não foi encontrado.");
-                    retorno = false;
-                }
+                retorno = true;
             }
             catch (Exception ex)
             {

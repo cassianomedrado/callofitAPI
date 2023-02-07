@@ -4,7 +4,6 @@ using callofitAPI.Util;
 using callofitAPI.Interfaces;
 using callofitAPI.Security.Models;
 using Npgsql;
-using NpgsqlTypes;
 using System.Data;
 
 namespace callofitAPI.Security.DAO
@@ -215,7 +214,7 @@ namespace callofitAPI.Security.DAO
 
         public async Task<List<RetornarUserViewModel>> getAllUsersAsync()
         {
-            List<RetornarUserViewModel> users = null;
+            IEnumerable<RetornarUserViewModel> users = null;
             try
             {
                 string sqlUser = $@" SELECT id, data_criacao, nome, email, tipo_usuario_id, username, status FROM tb_usuario ";
@@ -227,22 +226,22 @@ namespace callofitAPI.Security.DAO
 
                     using (var transaction = connection.BeginTransaction())
                     {
-                        users = connection.Query<RetornarUserViewModel>(sqlUser, transaction).ToList();
+                        users = await connection.QueryAsync<RetornarUserViewModel>(sqlUser, transaction);
                         transaction.Commit();
                     }
                 }
 
-                if (users == null)
+                if (users == null || users.Count() == 0)
                 {
                     Notificar("Usuários não encontrados.");
                 }
 
-                return users;
+                return users.ToList();
             }
             catch (Exception ex)
             {
                 Notificar("Não foi possível encontrar usuarios.");
-                return users;
+                return users.ToList();
             }
         }
 
@@ -268,7 +267,7 @@ namespace callofitAPI.Security.DAO
 
                     using (var transaction = connection.BeginTransaction())
                     {
-                        user = connection.Query<Usuario>(sql.CommandText, parameters, transaction).FirstOrDefault();
+                        user = await  connection.QueryFirstOrDefaultAsync<Usuario>(sql.CommandText, parameters, transaction);
                         transaction.Commit();
                     }
                 }

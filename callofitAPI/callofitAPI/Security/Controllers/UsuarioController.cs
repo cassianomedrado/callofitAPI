@@ -30,7 +30,7 @@ namespace callofitAPI.Security.Controllers
             try
             {
                 var listaUsu = await mwUser.getAllUsersAsync();
-                if (listaUsu == null)
+                if (listaUsu == null || listaUsu.Count() == 0   )
                 {
                     return NotFound(
                        new

@@ -1,7 +1,5 @@
 ﻿using callofitAPI.Models;
 using callofitAPI.Security.DAO;
-using callofitAPI.Security.Models;
-using callofitAPI.Util;
 
 namespace netbullAPI.Security.MidwareDB
 {

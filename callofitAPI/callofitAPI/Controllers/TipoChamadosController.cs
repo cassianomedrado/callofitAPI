@@ -12,23 +12,23 @@ namespace callofitAPI.Security.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class TipoUsuarioController : BaseController
+    public class TipoChamadosController : BaseController
     {
-        public TipoUsuarioController(INotificador notificador) : base(notificador) { }
+        public TipoChamadosController(INotificador notificador) : base(notificador) { }
 
         /// <summary>
-        /// Retorna todos os tipos de usuário cadastrados.
+        /// Retorna todos os tipos de chamados cadastrados.
         /// </summary>
-        /// <param name="mwTipoUsuario"></param>
+        /// <param name="mwTipoChamados"></param>
         /// <returns></returns>
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> getAllTiposUsuarioAsync([FromServices] TipoUsuarioMW mwTipoUsuario)
+        public async Task<IActionResult> getAllTiposChamadosAsync([FromServices] TipoChamadoMW mwTipoChamados)
         {
             try
             {
-                var listaTiposUsuario = await mwTipoUsuario.getAllTiposUsuarioAsync();
-                if (listaTiposUsuario == null || listaTiposUsuario.Count() == 0 )
+                var listaTiposChamados = await mwTipoChamados.getAllTiposChamadosAsync();
+                if (listaTiposChamados == null || listaTiposChamados.Count() == 0)
                 {
                     return NotFound(
                        new
@@ -39,30 +39,30 @@ namespace callofitAPI.Security.Controllers
                 }
                 else
                 {
-                    return Ok(listaTiposUsuario);
+                    return Ok(listaTiposChamados);
                 }
             }
             catch(Exception ex)
             {
-                Notificar("Falha ao buscar tipos de usuário.");
+                Notificar("Falha ao buscar tipos de chamados.");
                 return StatusCode(500, Notificacoes());
             }
         }
 
         /// <summary>
-        /// Retorna tipo de usuário por id.
+        /// Retorna tipo de chamado por id.
         /// </summary>
-        /// <param name="mwTipoUsuario"></param>
+        /// <param name="mwTipoChamados"></param>
         /// <param name="id"></param>
         /// <returns></returns>
         [Authorize]
         [HttpGet("{id}")]
-        public async Task<IActionResult> getTipoUsuarioPorIdAsync([FromServices] TipoUsuarioMW mwTipoUsuario, int id)
+        public async Task<IActionResult> getTipoChamadoPorIdAsync([FromServices] TipoChamadoMW mwTipoChamados, int id)
         {
             try
             {
-                var TipoUsuario = await mwTipoUsuario.getTipoUsuarioPorIdAsync(id);
-                if (TipoUsuario == null)
+                var TipoChamado = await mwTipoChamados.getTipoChamadoPorIdAsync(id);
+                if (TipoChamado == null)
                 {
                     return NotFound(
                        new
@@ -73,34 +73,34 @@ namespace callofitAPI.Security.Controllers
                 }
                 else
                 {
-                    return Ok(TipoUsuario);
+                    return Ok(TipoChamado);
                 }
             }
             catch (Exception ex)
             {
-                Notificar("Falha ao buscar tipo de usuário.");
+                Notificar("Falha ao buscar tipo de chamado.");
                 return StatusCode(500, Notificacoes());
             }
         }
 
         /// <summary>
-        /// Cadastrar tipo usuário.
+        /// Cadastrar tipo chamado.
         /// </summary>
-        /// <param name="mwTipoUsuario"></param>
-        /// <param name="tipoUsuario"></param>
+        /// <param name="mwTipoChamados"></param>
+        /// <param name="tipoChamado"></param>
         /// <returns></returns>
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> CriarTipoUsuarioAsync([FromServices] TipoUsuarioMW mwTipoUsuario,
-                                      [FromBody] TipoUsuarioViewModel tipoUsuario)
+        public async Task<IActionResult> CriarTipoChamadoAsync([FromServices] TipoChamadoMW mwTipoChamados,
+                                      [FromBody] TipoChamadoViewModel tipoChamado)
         {
             if (!ModelState.IsValid)
-                return BadRequest(new ResultViewModel<TipoUsuarioViewModel>(ModelState.RecuperarErros()));
+                return BadRequest(new ResultViewModel<TipoChamadoViewModel>(ModelState.RecuperarErros()));
 
             try
             {
-                var tpUsuario = await mwTipoUsuario.criarTipoUsuarioAsync(new TipoUsuarioModel(){ descricao = tipoUsuario .descricao });
-                if (tpUsuario.id == 0)
+                var tpChamado = await mwTipoChamados.criarTipoChamadoAsync(new TipoChamadoModel() {descricao = tipoChamado.descricao });
+                if (tpChamado.id == 0)
                 {
                     return UnprocessableEntity(
                        new
@@ -111,32 +111,32 @@ namespace callofitAPI.Security.Controllers
                 }
                 else
                 {
-                    return Created($"/{tpUsuario.id}", tpUsuario);
+                    return Created($"/{tpChamado.id}", tpChamado);
                 }
             }
             catch (Exception ex)
             {
-                Notificar("Falha ao cadastrar usuário.");
+                Notificar("Falha ao cadastrar chamado.");
                 return StatusCode(500, Notificacoes());
             }
         }
 
         /// <summary>
-        /// Alterar tipo de usuário por id.
+        /// Alterar tipo de chamado.
         /// </summary>
-        /// <param name="mwTipoUsuario"></param>
-        /// <param name="tipoUsuario"></param>
+        /// <param name="mwTipoChamados"></param>
+        /// <param name="tipoChamado"></param>
         /// <returns></returns>
         [Authorize]
         [HttpPut]
-        public async Task<IActionResult> putTipoUsuarioAsync([FromServices] TipoUsuarioMW mwTipoUsuario, TipoUsuarioModel tipoUsuario)
+        public async Task<IActionResult> putTipoChamadoAsync([FromServices] TipoChamadoMW mwTipoChamados, TipoChamadoModel tipoChamado)
         {
             if (!ModelState.IsValid)
-                return BadRequest(new ResultViewModel<TipoUsuarioModel>(ModelState.RecuperarErros()));
+                return BadRequest(new ResultViewModel<TipoChamadoModel>(ModelState.RecuperarErros()));
 
             try
             {
-                var sucess = await mwTipoUsuario.putTipoUsuarioAsync(tipoUsuario);
+                var sucess = await mwTipoChamados.putTipoChamadoAsync(tipoChamado);
 
                 if (!sucess)
                 {
@@ -154,24 +154,24 @@ namespace callofitAPI.Security.Controllers
             }
             catch (Exception ex)
             {
-                Notificar("Falha ao alterar senha do usuário.");
+                Notificar("Falha ao alterar tipo chamado.");
                 return BadRequest(Notificacoes());
             }
         }
 
         /// <summary>
-        /// Deletar um tipo usuário do sistema passando o ID.
+        /// Deletar um tipo chamado do sistema passando o ID.
         /// </summary>
-        /// <param name="mwTipoUsuario"></param>
+        /// <param name="mwTipoChamados"></param>
         /// <param name="id"></param>
         /// <returns></returns>
         [Authorize]
         [HttpDelete("delete/{id}")]
-        public async Task<IActionResult> DeleteTipoUsuarioAsync([FromServices] TipoUsuarioMW mwTipoUsuario, int id)
+        public async Task<IActionResult> DeleteTipoChamadoAsync([FromServices] TipoChamadoMW mwTipoChamados, int id)
         {
             try
             {
-                var sucess = await mwTipoUsuario.DeleteTipoUsuarioAsync(id);
+                var sucess = await mwTipoChamados.DeleteTipoChamadoAsync(id);
 
                 if (!sucess)
                 {
@@ -189,7 +189,7 @@ namespace callofitAPI.Security.Controllers
             }
             catch (Exception ex)
             {
-                Notificar("Falha ao deletar tipo usuário.");
+                Notificar("Falha ao deletar tipo chamado.");
                 return StatusCode(500, Notificacoes());
             }
         }
