@@ -12,9 +12,9 @@ namespace callofitAPI.Security.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class TipoChamadosController : BaseController
+    public class TipoChamadoController : BaseController
     {
-        public TipoChamadosController(INotificador notificador) : base(notificador) { }
+        public TipoChamadoController(INotificador notificador) : base(notificador) { }
 
         /// <summary>
         /// Retorna todos os tipos de chamados cadastrados.
@@ -116,7 +116,7 @@ namespace callofitAPI.Security.Controllers
             }
             catch (Exception ex)
             {
-                Notificar("Falha ao cadastrar chamado.");
+                Notificar("Falha ao cadastrar tipo chamado.");
                 return StatusCode(500, Notificacoes());
             }
         }

@@ -66,10 +66,12 @@ builder.Services.AddAuthentication(authOptions =>
 });
 
 // INJEÇÃO DE DEPENDENCIAS
+builder.Services.AddScoped<StatusChamadoMW>();
 builder.Services.AddScoped<TipoChamadoMW>();
 builder.Services.AddScoped<TipoUsuarioMW>(); 
 builder.Services.AddScoped<UsuarioMW>();
 builder.Services.AddScoped<INotificador, NotificadorMW>();
+builder.Services.AddTransient<StatusChamadoDAO>();
 builder.Services.AddTransient<TipoChamadoDAO>();
 builder.Services.AddTransient<TipoUsuarioDAO>();
 builder.Services.AddTransient<UsuarioDAO>();
