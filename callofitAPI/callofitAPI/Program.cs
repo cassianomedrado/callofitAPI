@@ -3,6 +3,7 @@ using callofitAPI.Security.DAO;
 using callofitAPI.Security.Service;
 using callofitAPI.Util;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using netbullAPI.Middleware;
@@ -66,11 +67,13 @@ builder.Services.AddAuthentication(authOptions =>
 });
 
 // INJEÇÃO DE DEPENDENCIAS
+builder.Services.AddScoped<SistemaSuportadoMW>();
 builder.Services.AddScoped<StatusChamadoMW>();
 builder.Services.AddScoped<TipoChamadoMW>();
 builder.Services.AddScoped<TipoUsuarioMW>(); 
 builder.Services.AddScoped<UsuarioMW>();
 builder.Services.AddScoped<INotificador, NotificadorMW>();
+builder.Services.AddTransient<SistemaSuportadoDAO>();
 builder.Services.AddTransient<StatusChamadoDAO>();
 builder.Services.AddTransient<TipoChamadoDAO>();
 builder.Services.AddTransient<TipoUsuarioDAO>();
@@ -88,7 +91,10 @@ app.UseCors(builder => builder
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
+    app.UseSwagger(options =>
+    {
+        options.SerializeAsV2 = true;
+    });
     app.UseSwaggerUI();
 }
 
