@@ -21,5 +21,10 @@ namespace netbullAPI.Middleware
         {
             return this.notificacoes;
         }
+
+        public void LimparNotificacoes()
+        {
+            this.notificacoes = new List<Notificacao>();
+        }
     }
 }

@@ -20,7 +20,7 @@ namespace callofitAPI.Security.DAO
             IEnumerable<TipoChamadoModel> tiposChamados = null;
             try
             {
-                string sql = $@" SELECT * FROM tb_tipo_chamados ";
+                string sqlTipoChamado = $@" SELECT * FROM tb_tipo_chamados ";
                 var connection = getConnection();
 
                 using (connection)
@@ -29,7 +29,7 @@ namespace callofitAPI.Security.DAO
 
                     using (var transaction = connection.BeginTransaction())
                     {
-                        tiposChamados = await connection.QueryAsync<TipoChamadoModel>(sql, transaction);
+                        tiposChamados = await connection.QueryAsync<TipoChamadoModel>(sqlTipoChamado, transaction);
                         transaction.Commit();
                     }
                 }
@@ -139,7 +139,7 @@ namespace callofitAPI.Security.DAO
                 if(Notificacoes().Count > 0)
                     return retorno;
         
-                string sqlUser = $@" UPDATE tb_tipo_chamados SET descricao = @descricao WHERE id = @id";
+                string sqlTipoChamado = $@" UPDATE tb_tipo_chamados SET descricao = @descricao WHERE id = @id";
 
                 var connection = getConnection();
 
@@ -147,7 +147,7 @@ namespace callofitAPI.Security.DAO
                 {
                     NpgsqlCommand sql = connection.CreateCommand();
                     sql.CommandType = CommandType.Text;
-                    sql.CommandText = sqlUser;
+                    sql.CommandText = sqlTipoChamado;
 
                     var parameters = new DynamicParameters();
                     parameters.Add("@descricao", tipoChamado.descricao);
@@ -231,7 +231,7 @@ namespace callofitAPI.Security.DAO
 
                 if (tipoChamadoExistente != null)
                 {
-                    string sqlUser = $@" DELETE FROM tb_tipo_chamados WHERE id = @id";
+                    string sqlTipoChamado = $@" DELETE FROM tb_tipo_chamados WHERE id = @id";
 
                     var connection = getConnection();
 
@@ -239,7 +239,7 @@ namespace callofitAPI.Security.DAO
                     {
                         NpgsqlCommand sql = connection.CreateCommand();
                         sql.CommandType = CommandType.Text;
-                        sql.CommandText = sqlUser;
+                        sql.CommandText = sqlTipoChamado;
 
                         var parameters = new DynamicParameters();
                         parameters.Add("@id", id);

@@ -2,6 +2,7 @@
 using callofitAPI.Interfaces;
 using callofitAPI.Models;
 using callofitAPI.Util;
+using callofitAPI.ViewModels.SistemaSuportado;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using netbullAPI.Security.MidwareDB;
@@ -83,115 +84,121 @@ namespace callofitAPI.Security.Controllers
             }
         }
 
-        ///// <summary>
-        ///// Cadastrar status de chamado.
-        ///// </summary>
-        ///// <param name="mwStatusChamado"></param>
-        ///// <param name="statusChamado"></param>
-        ///// <returns></returns>
-        //[Authorize]
-        //[HttpPost]
-        //public async Task<IActionResult> CriarStatusChamadoAsync([FromServices] StatusChamadoMW mwStatusChamado,
-        //                              [FromBody] StatusChamadoViewModel statusChamado)
-        //{
-        //    if (!ModelState.IsValid)
-        //        return BadRequest(new ResultViewModel<StatusChamadoViewModel>(ModelState.RecuperarErros()));
+        /// <summary>
+        /// Cadastrar sistema suportado.
+        /// </summary>
+        /// <param name="mwSistemaSuportado"></param>
+        /// <param name="sistemaSuportado"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> CriarSistemaSuportadoAsync([FromServices] SistemaSuportadoMW mwSistemaSuportado,
+                                      [FromBody] SistemaSuportadoPOSTViewModel sistemaSuportado)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new ResultViewModel<SistemaSuportadoPOSTViewModel>(ModelState.RecuperarErros()));
 
-        //    try
-        //    {
-        //        var sTatusChamado = await mwStatusChamado.criarStatusChamadoAsync(new StatusChamadoModel(){ descricao = statusChamado.descricao });
-        //        if (sTatusChamado.id == 0)
-        //        {
-        //            return UnprocessableEntity(
-        //               new
-        //               {
-        //                   status = HttpStatusCode.UnprocessableEntity,
-        //                   Error = Notificacoes()
-        //               });
-        //        }
-        //        else
-        //        {
-        //            return Created($"/{sTatusChamado.id}", sTatusChamado);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Notificar("Falha ao cadastrar status de chamado.");
-        //        return StatusCode(500, Notificacoes());
-        //    }
-        //}
+            try
+            {
+                var sistSuportado = await mwSistemaSuportado.criarSistemaSuportadoAsync(new SistemaSuportadoModel() { data_criacao = DateTime.Now ,nome = sistemaSuportado.nome });
+                if (sistSuportado.id == 0)
+                {
+                    return UnprocessableEntity(
+                       new
+                       {
+                           status = HttpStatusCode.UnprocessableEntity,
+                           Error = Notificacoes()
+                       });
+                }
+                else
+                {
+                    return Created($"/{sistSuportado.id}", sistSuportado);
+                }
+            }
+            catch (Exception ex)
+            {
+                Notificar("Falha ao cadastrar sistema suportado.");
+                return StatusCode(500, Notificacoes());
+            }
+        }
 
-        ///// <summary>
-        ///// Alterar status de chamado por id.
-        ///// </summary>
-        ///// <param name="mwStatusChamado"></param>
-        ///// <param name="statusChamado"></param>
-        ///// <returns></returns>
-        //[Authorize]
-        //[HttpPut]
-        //public async Task<IActionResult> putStatusChamadoAsync([FromServices] StatusChamadoMW mwStatusChamado, StatusChamadoModel statusChamado)
-        //{
-        //    if (!ModelState.IsValid)
-        //        return BadRequest(new ResultViewModel<StatusChamadoModel>(ModelState.RecuperarErros()));
+        /// <summary>
+        /// Alterar sistema suportado por id.
+        /// </summary>
+        /// <param name="mwStatusChamado"></param>
+        /// <param name="sistemaSuportado"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPut]
+        public async Task<IActionResult> putSistemaSuportaAsync([FromServices] SistemaSuportadoMW mwSistemaSuportado, SistemaSuportadoPUTViewModel sistemaSuportado)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new ResultViewModel<SistemaSuportadoPUTViewModel>(ModelState.RecuperarErros()));
 
-        //    try
-        //    {
-        //        var sucess = await mwStatusChamado.putStatusChamadoAsync(statusChamado);
+            try
+            {
+                var sucess = await mwSistemaSuportado.putSistemaSuportadoAsync(
+                    new SistemaSuportadoModel() 
+                    { 
+                        id = sistemaSuportado.id,
+                        nome = sistemaSuportado.nome,
+                        data_criacao = DateTime.Now 
+                    });
 
-        //        if (!sucess)
-        //        {
-        //            return NotFound(
-        //               new
-        //               {
-        //                   status = HttpStatusCode.NotFound,
-        //                   Error = Notificacoes()
-        //               });
-        //        }
-        //        else
-        //        {
-        //            return Ok();
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Notificar("Falha ao alterar status de chamado.");
-        //        return BadRequest(Notificacoes());
-        //    }
-        //}
+                if (!sucess)
+                {
+                    return NotFound(
+                       new
+                       {
+                           status = HttpStatusCode.NotFound,
+                           Error = Notificacoes()
+                       });
+                }
+                else
+                {
+                    return Ok();
+                }
+            }
+            catch (Exception ex)
+            {
+                Notificar("Falha ao alterar sistema suportado.");
+                return BadRequest(Notificacoes());
+            }
+        }
 
-        ///// <summary>
-        ///// Deletar um status de chamado do sistema passando o ID.
-        ///// </summary>
-        ///// <param name="mwStatusChamado"></param>
-        ///// <param name="id"></param>
-        ///// <returns></returns>
-        //[Authorize]
-        //[HttpDelete("delete/{id}")]
-        //public async Task<IActionResult> DeleteStatusChamadoAsync([FromServices] StatusChamadoMW mwStatusChamado, int id)
-        //{
-        //    try
-        //    {
-        //        var sucess = await mwStatusChamado.DeleteStatusChamadoAsync(id);
+        /// <summary>
+        /// Deletar um sistema suportado passando o ID.
+        /// </summary>
+        /// <param name="mwSistemaSuportado"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteSistemaSuportaAsync([FromServices] SistemaSuportadoMW mwSistemaSuportado, int id)
+        {
+            try
+            {
+                var sucess = await mwSistemaSuportado.DeleteSistemaSuportadAsync(id);
 
-        //        if (!sucess)
-        //        {
-        //            return NotFound(
-        //               new
-        //               {
-        //                   status = HttpStatusCode.NotFound,
-        //                   Error = Notificacoes()
-        //               });
-        //        }
-        //        else
-        //        {
-        //            return Ok();
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Notificar("Falha ao deletar status de chamado.");
-        //        return StatusCode(500, Notificacoes());
-        //    }
-        //}
+                if (!sucess)
+                {
+                    return NotFound(
+                       new
+                       {
+                           status = HttpStatusCode.NotFound,
+                           Error = Notificacoes()
+                       });
+                }
+                else
+                {
+                    return Ok();
+                }
+            }
+            catch (Exception ex)
+            {
+                Notificar("Falha ao deletar sistema suportado.");
+                return StatusCode(500, Notificacoes());
+            }
+        }
     }
 }

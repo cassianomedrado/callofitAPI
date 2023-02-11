@@ -4,6 +4,7 @@ using callofitAPI.Interfaces;
 using Npgsql;
 using System.Data;
 using callofitAPI.Models;
+using netbullAPI.Security.MidwareDB;
 
 namespace callofitAPI.Security.DAO
 {
@@ -20,7 +21,7 @@ namespace callofitAPI.Security.DAO
             IEnumerable<SistemaSuportadoModel> sistemaSuportado = null;
             try
             {
-                string sql = $@" SELECT * FROM tb_sistema_suportado ";
+                string sqlSistemaSuportado = $@" SELECT * FROM tb_sistema_suportado ";
                 var connection = getConnection();
 
                 using (connection)
@@ -29,7 +30,7 @@ namespace callofitAPI.Security.DAO
 
                     using (var transaction = connection.BeginTransaction())
                     {
-                        sistemaSuportado = await connection.QueryAsync<SistemaSuportadoModel>(sql, transaction);
+                        sistemaSuportado = await connection.QueryAsync<SistemaSuportadoModel>(sqlSistemaSuportado, transaction);
                         transaction.Commit();
                     }
                 }
@@ -89,178 +90,181 @@ namespace callofitAPI.Security.DAO
             }
         }
 
-        //public async Task<StatusChamadoModel> getStatusChamadoPorDescAsync(string desc)
-        //{
-        //    StatusChamadoModel StatusChamado = null;
-        //    try
-        //    {
-        //        string sqlStatusChamado = $@" SELECT * FROM tb_status_chamado WHERE descricao = @desc";
+        public async Task<SistemaSuportadoModel> criarSistemaSuportadoAsync(SistemaSuportadoModel sistemaSuportado)
+        {
+            SistemaSuportadoModel SistemaSuportadoExistente = null;
+            try
+            {
+                SistemaSuportadoExistente = await getSistemaSuportadoPorNomeAsync(sistemaSuportado.nome);
+                
+                if (SistemaSuportadoExistente == null)
+                {
+                    LimparNotificacoes();
+                    string sqlSistemaSuportado = $@" INSERT INTO tb_sistema_suportado (nome, data_criacao) VALUES(@nome, @data_criacao)";
 
-        //        var connection = getConnection();
+                    var connection = getConnection();
 
-        //        using (connection)
-        //        {
-        //            NpgsqlCommand sql = connection.CreateCommand();
-        //            sql.CommandType = CommandType.Text;
-        //            sql.CommandText = sqlStatusChamado;
+                    using (connection)
+                    {
+                        NpgsqlCommand sql = connection.CreateCommand();
+                        sql.CommandType = CommandType.Text;
+                        sql.CommandText = sqlSistemaSuportado;
 
-        //            var parameters = new DynamicParameters();
-        //            parameters.Add("@desc", desc);
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@nome", sistemaSuportado.nome);
+                        parameters.Add("@data_criacao", sistemaSuportado.data_criacao);
 
-        //            connection.Open();
+                        connection.Open();
 
-        //            using (var transaction = connection.BeginTransaction())
-        //            {
-        //                StatusChamado = await connection.QueryFirstOrDefaultAsync<StatusChamadoModel>(sql.CommandText, parameters, transaction);
-        //                transaction.Commit();
-        //            }
-        //        }
+                        using (var transaction = connection.BeginTransaction())
+                        {
+                            connection.Execute(sql.CommandText, parameters, transaction);
 
-        //        if (StatusChamado == null)
-        //        {
-        //            Notificar("Status de chamado não encontrado.");
-        //        }
+                            transaction.Commit();
+                        }
+                    }
 
-        //        return StatusChamado;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Notificar("Não foi possível recuperar status de chamado.");
-        //        return StatusChamado;
-        //    }
-        //}
+                    SistemaSuportadoExistente = await getSistemaSuportadoPorNomeAsync(sistemaSuportado.nome);
 
-        //public async Task<bool> putStatusChamadoAsync(StatusChamadoModel StatusChamado)
-        //{
-        //    var retorno = false;
-        //    try
-        //    {
-        //        var StatusChamadoExistente = await getStatusChamadoPorIdAsync(StatusChamado.id);
-        //        if(Notificacoes().Count > 0)
-        //            return retorno;
+                    return SistemaSuportadoExistente;
+                }
+                else
+                {
+                    Notificar("Sistema suportado já cadastrado.");
+                    SistemaSuportadoExistente.id = 0;
+                    return SistemaSuportadoExistente;
+                }
+            }
+            catch (Exception ex)
+            {
+                Notificar(ex.Message);
+                return SistemaSuportadoExistente;
+            }
+        }
 
-        //        string sqlUser = $@" UPDATE tb_status_chamado SET descricao = @descricao WHERE id = @id";
+        public async Task<SistemaSuportadoModel> getSistemaSuportadoPorNomeAsync(string nome)
+        {
+            SistemaSuportadoModel sistemaSuportado = null;
+            try
+            {
+                string sqlSistemaSuportado = $@" SELECT * FROM tb_sistema_suportado WHERE nome = @nome";
 
-        //        var connection = getConnection();
+                var connection = getConnection();
 
-        //        using (connection)
-        //        {
-        //            NpgsqlCommand sql = connection.CreateCommand();
-        //            sql.CommandType = CommandType.Text;
-        //            sql.CommandText = sqlUser;
+                using (connection)
+                {
+                    NpgsqlCommand sql = connection.CreateCommand();
+                    sql.CommandType = CommandType.Text;
+                    sql.CommandText = sqlSistemaSuportado;
 
-        //            var parameters = new DynamicParameters();
-        //            parameters.Add("@descricao", StatusChamado.descricao);
-        //            parameters.Add("@id", StatusChamado.id);
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@nome", nome);
 
-        //            connection.Open();
+                    connection.Open();
 
-        //            using (var transaction = connection.BeginTransaction())
-        //            {
-        //                connection.Execute(sql.CommandText, parameters, transaction);
-        //                transaction.Commit();
-        //            }
-        //        }
-        //        retorno = true;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Notificar("Nao foi possível alterar dados do status de chamado.");
-        //    }
-        //    return retorno;
-        //}
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        sistemaSuportado = await connection.QueryFirstOrDefaultAsync<SistemaSuportadoModel>(sql.CommandText, parameters, transaction);
+                        transaction.Commit();
+                    }
+                }
 
-        //public async Task<StatusChamadoModel> criarStatusChamadoAsync(StatusChamadoModel StatusChamado)
-        //{
-        //    StatusChamadoModel StatusChamadoExistente = null;
-        //    try
-        //    {
-        //        StatusChamadoExistente = await getStatusChamadoPorDescAsync(StatusChamado.descricao);
+                if (sistemaSuportado == null)
+                {
+                    Notificar("Sistema suportado não encontrado.");
+                }
 
-        //        if (StatusChamadoExistente == null)
-        //        {
-        //            string sqlStatusChamado = $@" INSERT INTO tb_status_chamado (descricao) VALUES(@descricao)";
+                return sistemaSuportado;
+            }
+            catch (Exception ex)
+            {
+                Notificar("Não foi possível recuperar sistema suportado.");
+                return sistemaSuportado;
+            }
+        }
 
-        //            var connection = getConnection();
+        public async Task<bool> putSistemaSuportadoAsync(SistemaSuportadoModel sistemaSuportado)
+        {
+            var retorno = false;
+            try
+            {
+                var SistemaSuportadoExistente = await getSistemaSuportaPorIdAsync(sistemaSuportado.id);
+                if (Notificacoes().Count > 0)
+                    return retorno;
 
-        //            using (connection)
-        //            {
-        //                NpgsqlCommand sql = connection.CreateCommand();
-        //                sql.CommandType = CommandType.Text;
-        //                sql.CommandText = sqlStatusChamado;
+                string sqlSistemaSuportado = $@" UPDATE tb_sistema_suportado SET nome = @nome, data_criacao = @data_criacao WHERE id = @id";
 
-        //                var parameters = new DynamicParameters();
-        //                parameters.Add("@descricao", StatusChamado.descricao);
+                var connection = getConnection();
 
-        //                connection.Open();
+                using (connection)
+                {
+                    NpgsqlCommand sql = connection.CreateCommand();
+                    sql.CommandType = CommandType.Text;
+                    sql.CommandText = sqlSistemaSuportado;
 
-        //                using (var transaction = connection.BeginTransaction())
-        //                {
-        //                    connection.Execute(sql.CommandText, parameters, transaction);
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id", sistemaSuportado.id);
+                    parameters.Add("@nome", sistemaSuportado.nome);
+                    parameters.Add("@data_criacao", sistemaSuportado.data_criacao);
 
-        //                    transaction.Commit();
-        //                }
-        //            }
+                    connection.Open();
 
-        //            StatusChamadoExistente = await getStatusChamadoPorDescAsync(StatusChamado.descricao);
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        connection.Execute(sql.CommandText, parameters, transaction);
+                        transaction.Commit();
+                    }
+                }
+                retorno = true;
+            }
+            catch (Exception ex)
+            {
+                Notificar("Nao foi possível alterar dados do sistema suportado.");
+            }
+            return retorno;
+        }
 
-        //            return StatusChamadoExistente;
-        //        }
-        //        else
-        //        {
-        //            Notificar("Status de chamado já cadastrado.");
-        //            StatusChamadoExistente.id = 0;
-        //            return StatusChamadoExistente;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Notificar(ex.Message);
-        //        return StatusChamadoExistente;
-        //    }
-        //}
+        public async Task<bool> DeleteSistemaSuportadAsync(int id)
+        {
+            var retorno = false;
+            try
+            {
+                var SistemaSuportadoExistente = await getSistemaSuportaPorIdAsync(id);
+                if (Notificacoes().Count > 0)
+                    return retorno;
 
-        //public async Task<bool> DeleteStatusChamadoAsync(int id)
-        //{
-        //    var retorno = false;
-        //    try
-        //    {
-        //        var StatusChamadoExistente = await getStatusChamadoPorIdAsync(id);
-        //        if (Notificacoes().Count > 0)
-        //            return retorno;
+                if (SistemaSuportadoExistente != null)
+                {
+                    string sqlSistemaSuportado = $@" DELETE FROM tb_sistema_suportado WHERE id = @id";
 
-        //        if (StatusChamadoExistente != null)
-        //        {
-        //            string sqlUser = $@" DELETE FROM tb_status_chamado WHERE id = @id";
+                    var connection = getConnection();
 
-        //            var connection = getConnection();
+                    using (connection)
+                    {
+                        NpgsqlCommand sql = connection.CreateCommand();
+                        sql.CommandType = CommandType.Text;
+                        sql.CommandText = sqlSistemaSuportado;
 
-        //            using (connection)
-        //            {
-        //                NpgsqlCommand sql = connection.CreateCommand();
-        //                sql.CommandType = CommandType.Text;
-        //                sql.CommandText = sqlUser;
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@id", id);
 
-        //                var parameters = new DynamicParameters();
-        //                parameters.Add("@id", id);
+                        connection.Open();
 
-        //                connection.Open();
+                        using (var transaction = connection.BeginTransaction())
+                        {
+                            connection.Execute(sql.CommandText, parameters, transaction);
+                            transaction.Commit();
+                        }
+                    }
 
-        //                using (var transaction = connection.BeginTransaction())
-        //                {
-        //                    connection.Execute(sql.CommandText, parameters, transaction);
-        //                    transaction.Commit();
-        //                }
-        //            }
-
-        //            retorno = true;
-        //        }              
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Notificar("Não foi possível deletar status de chamado.");
-        //    }
-        //    return retorno;
-        //}
+                    retorno = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Notificar("Não foi possível deletar sistema suportado.");
+            }
+            return retorno;
+        }
     }
 }

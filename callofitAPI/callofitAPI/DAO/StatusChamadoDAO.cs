@@ -20,7 +20,7 @@ namespace callofitAPI.Security.DAO
             IEnumerable<StatusChamadoModel> statusChamados = null;
             try
             {
-                string sql = $@" SELECT * FROM tb_status_chamado ";
+                string sqlStatusChamado = $@" SELECT * FROM tb_status_chamado ";
                 var connection = getConnection();
 
                 using (connection)
@@ -29,7 +29,7 @@ namespace callofitAPI.Security.DAO
 
                     using (var transaction = connection.BeginTransaction())
                     {
-                        statusChamados = await connection.QueryAsync<StatusChamadoModel>(sql, transaction);
+                        statusChamados = await connection.QueryAsync<StatusChamadoModel>(sqlStatusChamado, transaction);
                         transaction.Commit();
                     }
                 }
@@ -139,7 +139,7 @@ namespace callofitAPI.Security.DAO
                 if(Notificacoes().Count > 0)
                     return retorno;
         
-                string sqlUser = $@" UPDATE tb_status_chamado SET descricao = @descricao WHERE id = @id";
+                string sqlStatusChamado = $@" UPDATE tb_status_chamado SET descricao = @descricao WHERE id = @id";
 
                 var connection = getConnection();
 
@@ -147,7 +147,7 @@ namespace callofitAPI.Security.DAO
                 {
                     NpgsqlCommand sql = connection.CreateCommand();
                     sql.CommandType = CommandType.Text;
-                    sql.CommandText = sqlUser;
+                    sql.CommandText = sqlStatusChamado;
 
                     var parameters = new DynamicParameters();
                     parameters.Add("@descricao", StatusChamado.descricao);
@@ -179,6 +179,7 @@ namespace callofitAPI.Security.DAO
 
                 if (StatusChamadoExistente == null)
                 {
+                    LimparNotificacoes();
                     string sqlStatusChamado = $@" INSERT INTO tb_status_chamado (descricao) VALUES(@descricao)";
 
                     var connection = getConnection();
@@ -231,7 +232,7 @@ namespace callofitAPI.Security.DAO
 
                 if (StatusChamadoExistente != null)
                 {
-                    string sqlUser = $@" DELETE FROM tb_status_chamado WHERE id = @id";
+                    string sqlStatusChamado = $@" DELETE FROM tb_status_chamado WHERE id = @id";
 
                     var connection = getConnection();
 
@@ -239,7 +240,7 @@ namespace callofitAPI.Security.DAO
                     {
                         NpgsqlCommand sql = connection.CreateCommand();
                         sql.CommandType = CommandType.Text;
-                        sql.CommandText = sqlUser;
+                        sql.CommandText = sqlStatusChamado;
 
                         var parameters = new DynamicParameters();
                         parameters.Add("@id", id);

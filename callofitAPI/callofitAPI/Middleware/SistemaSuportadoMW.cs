@@ -22,19 +22,19 @@ namespace netbullAPI.Security.MidwareDB
             return await _sistemaSuportadoDao.getSistemaSuportaPorIdAsync(id);
         }
 
-        //public async Task<bool> putStatusChamadoAsync(StatusChamadoModel StatusChamado)
-        //{
-        //    return await _statusChamadoDao.putStatusChamadoAsync(StatusChamado);
-        //}
+        public async Task<SistemaSuportadoModel> criarSistemaSuportadoAsync(SistemaSuportadoModel sistemaSuportado)
+        {
+            return await _sistemaSuportadoDao.criarSistemaSuportadoAsync(sistemaSuportado);
+        }
 
-        //public async Task<StatusChamadoModel> criarStatusChamadoAsync(StatusChamadoModel StatusChamado)
-        //{
-        //    return await _statusChamadoDao.criarStatusChamadoAsync(StatusChamado);
-        //}
+        public async Task<bool> putSistemaSuportadoAsync(SistemaSuportadoModel sistemaSuportado)
+        {
+            return await _sistemaSuportadoDao.putSistemaSuportadoAsync(sistemaSuportado);
+        }
 
-        //public async Task<bool> DeleteStatusChamadoAsync(int id)
-        //{
-        //    return await _statusChamadoDao.DeleteStatusChamadoAsync(id);
-        //}
+        public async Task<bool> DeleteSistemaSuportadAsync(int id)
+        {
+            return await _sistemaSuportadoDao.DeleteSistemaSuportadAsync(id);
+        }
     }
 }

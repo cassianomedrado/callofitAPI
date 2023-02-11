@@ -6,5 +6,6 @@ namespace callofitAPI.Interfaces
     {
         public void Adicionar(Notificacao notificacao);
         public List<Notificacao> ObterNotificacoes();
+        public void LimparNotificacoes();
     }
 }

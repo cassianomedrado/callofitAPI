@@ -31,6 +31,11 @@ namespace callofitAPI.Util
         {
             return this._notificador.ObterNotificacoes();
         }
+
+        protected void LimparNotificacoes()
+        {
+            this._notificador.LimparNotificacoes();
+        }
     }
        
 }
