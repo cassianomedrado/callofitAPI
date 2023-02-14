@@ -9,7 +9,7 @@ namespace callofitAPI.Models
         public int id { get; set; }
 
         [Required(ErrorMessage = "O Nome é obrigatória.")]
-        [StringLength(60, ErrorMessage = "Nome deve ter no máximo 20 caracteres.")]
+        [StringLength(60, ErrorMessage = "Nome deve ter no máximo 60 caracteres.")]
         public string nome { get; set; }
 
         public DateTime data_criacao { get; set; }
