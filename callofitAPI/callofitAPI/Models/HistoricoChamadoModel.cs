@@ -5,7 +5,6 @@ namespace callofitAPI.Models
 {
     public class HistoricoChamadoModel
     {
-        [Required(ErrorMessage = "O id do tipo usuário é obrigatório.")]
         public int id { get; set; }
         public DateTime data_criacao { get; set; }
 
