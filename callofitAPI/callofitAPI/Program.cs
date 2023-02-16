@@ -28,6 +28,10 @@ builder.Services.AddSwaggerGen(s =>
         TermsOfService = new Uri("https://example.com/terms")
     });
 
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    s.IncludeXmlComments(xmlPath);
+
     s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
     {
         Name = "Authorization",
