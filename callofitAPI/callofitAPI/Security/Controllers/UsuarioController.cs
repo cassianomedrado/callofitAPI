@@ -52,6 +52,40 @@ namespace callofitAPI.Security.Controllers
         }
 
         /// <summary>
+        /// Retorna dados do usuário pelo username.
+        /// </summary>
+        /// <param name="mwUser"></param>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> GetUserPorUsernameAsync([FromServices] UsuarioMW mwUser, [FromBody] RetornarUserPorUsernameViewModel username)
+        {
+            try
+            {
+                var usu = await mwUser.RecuperarUsuarioAsync( new Usuario () { username = username.username });
+                if (usu == null)
+                {
+                    return NotFound(
+                       new
+                       {
+                           status = HttpStatusCode.NotFound,
+                           Error = Notificacoes()
+                       });
+                }
+                else
+                {
+                    return Ok(usu);
+                }
+            }
+            catch (Exception ex)
+            {
+                Notificar("Falha ao usuário.");
+                return StatusCode(500, Notificacoes());
+            }
+        }
+
+        /// <summary>
         /// Cadastrar usuário para acesso ao sistema.
         /// </summary>
         /// <param name="mwUser"></param>
