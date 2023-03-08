@@ -55,5 +55,10 @@ namespace netbullAPI.Security.MidwareDB
         {
             return await _ChamadoDao.DeletarChamadoAsync(id);
         }
+
+        public async Task<BuscaTotaisChamados> getAllTotaisChamadosAsync()
+        {
+            return await _ChamadoDao.getAllTotaisChamadosAsync();
+        }
     }
 }

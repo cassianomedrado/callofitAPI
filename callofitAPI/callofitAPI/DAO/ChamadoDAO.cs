@@ -5,6 +5,7 @@ using callofitAPI.Models;
 using Npgsql;
 using System.Data;
 using netbullAPI.Security.MidwareDB;
+using System;
 
 namespace callofitAPI.Security.DAO
 {
@@ -306,6 +307,43 @@ namespace callofitAPI.Security.DAO
                 Notificar(ex.Message);
             }
             return retorno;
+        }
+
+        public async Task<BuscaTotaisChamados> getAllTotaisChamadosAsync()
+        {
+            BuscaTotaisChamados chamado = null;
+            try
+            {
+                string sqlChamado = $@" select distinct (select count(1) from tb_chamados where status_chamado_id = 1 ) as chamadosEmAberto,
+			                                            (select count(1) from tb_chamados where status_chamado_id = 2 ) as chamadosPendentes,
+			                                            (select count(1) from tb_chamados where status_chamado_id = 3 ) as chamadosFinalizados,
+			                                            (select count(1) from tb_chamados where status_chamado_id = 4 ) as chamadosAtrasados
+                                        from tb_chamados ";
+
+                var connection = getConnection();
+
+                using (connection)
+                {
+                    NpgsqlCommand sql = connection.CreateCommand();
+                    sql.CommandType = CommandType.Text;
+                    sql.CommandText = sqlChamado;
+
+                    connection.Open();
+
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        chamado = await connection.QueryFirstAsync<BuscaTotaisChamados>(sql.CommandText, transaction);
+                        transaction.Commit();
+                    }
+                }
+
+                return chamado;
+            }
+            catch (Exception ex)
+            {
+                Notificar("Não foi possível recuperar totalizadores de chamados.");
+                return chamado;
+            }
         }
     }
 }

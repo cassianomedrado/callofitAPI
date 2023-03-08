@@ -96,7 +96,44 @@ namespace callofitAPI.Security.Controllers
                                       [FromBody] ChamadoPOSTViewModel chamado)
         {
             if (!ModelState.IsValid)
+            {
                 return BadRequest(new ResultViewModel<ChamadoPOSTViewModel>(ModelState.RecuperarErros()));
+            }
+            else
+            {
+                if (chamado.sistema_suportado_id == 0)
+                {
+                    Notificar("Sistema suportado deve ser informado.");
+                    return BadRequest(
+                       new
+                       {
+                           status = HttpStatusCode.UnprocessableEntity,
+                           Error = Notificacoes()
+                       });
+                }
+
+                if (chamado.status_chamado_id == 0)
+                {
+                    Notificar("Stats do chamado deve ser informado..");
+                    return BadRequest(
+                       new
+                       {
+                           status = HttpStatusCode.UnprocessableEntity,
+                           Error = Notificacoes()
+                       });
+                }
+
+                if (chamado.tipo_chamado_id == 0)
+                {
+                    Notificar("Tipo do chamado deve ser informado..");
+                    return BadRequest(
+                       new
+                       {
+                           status = HttpStatusCode.UnprocessableEntity,
+                           Error = Notificacoes()
+                       });
+                }
+            }
 
             try
             {
@@ -217,5 +254,39 @@ namespace callofitAPI.Security.Controllers
                 return StatusCode(500, Notificacoes());
             }
         }
+
+        /// <summary>
+        /// Buscar totais de chamados.
+        /// </summary>
+        /// <param name="mwChamado"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet("totais")]
+        public async Task<IActionResult> getAllTotaisChamadosAsync([FromServices] ChamadoMW mwChamado)
+        {
+            try
+            {
+                var listaTotaisChamados = await mwChamado.getAllTotaisChamadosAsync();
+                if (listaTotaisChamados == null)
+                {
+                    return NotFound(
+                       new
+                       {
+                           status = HttpStatusCode.NotFound,
+                           Error = Notificacoes()
+                       });
+                }
+                else
+                {
+                    return Ok(listaTotaisChamados);
+                }
+            }
+            catch (Exception ex)
+            {
+                Notificar("Falha ao buscar chamados.");
+                return StatusCode(500, Notificacoes());
+            }
+        }
+
     }
 }
