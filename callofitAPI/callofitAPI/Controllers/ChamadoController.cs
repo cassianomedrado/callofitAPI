@@ -196,7 +196,8 @@ namespace callofitAPI.Security.Controllers
                     sistema_suportado_id = chamado.sistema_suportado_id,
                     descricao_problema = chamado.descricao_problema,
                     descricao_solucao = chamado.descricao_solucao,
-                    tipo_chamado_id = chamado.tipo_chamado_id
+                    tipo_chamado_id = chamado.tipo_chamado_id,
+                    tecnico_usuario_id = chamado.tecnico_usuario_id
                 });
 
                 if (!sucess)

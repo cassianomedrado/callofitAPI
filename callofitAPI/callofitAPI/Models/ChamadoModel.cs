@@ -10,6 +10,7 @@
         public int sistema_suportado_id { get; set; }
         public string descricao_problema { get; set; }
         public int usuario_id { get; set; }
+        public int? tecnico_usuario_id { get; set; }
         public string descricao_solucao { get; set; }
         public int tipo_chamado_id { get; set; }
         public Guid identificador_unico { get; set; }   

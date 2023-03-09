@@ -26,5 +26,6 @@ namespace callofitAPI.Models
         public string descricao_solucao { get; set; }
         [Required(ErrorMessage = "Id do tipo de chamado é obrigatório.")]
         public int tipo_chamado_id { get; set; }
+        public int? tecnico_usuario_id { get; set; }
     }
 }
