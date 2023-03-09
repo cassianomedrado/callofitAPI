@@ -1,5 +1,6 @@
 ﻿using callofitAPI.Models;
 using callofitAPI.Security.DAO;
+using callofitAPI.ViewModels.Chamados;
 
 namespace netbullAPI.Security.MidwareDB
 {
@@ -56,9 +57,14 @@ namespace netbullAPI.Security.MidwareDB
             return await _ChamadoDao.DeletarChamadoAsync(id);
         }
 
-        public async Task<BuscaTotaisChamados> getAllTotaisChamadosAsync()
+        public async Task<BuscaTotaisChamados> getAllTotaisChamadosPorUsuarioAsync(RequestTotaisChamados request)
         {
-            return await _ChamadoDao.getAllTotaisChamadosAsync();
+            return await _ChamadoDao.getAllTotaisChamadosPorUsuarioAsync(request);
+        }
+
+        public async Task<List<ChamadoModel>> getAllChamadosPorUsuarioAsync(RequestBuscarChamados request)
+        {
+            return await _ChamadoDao.getAllChamadosPorUsuarioAsync(request);
         }
     }
 }

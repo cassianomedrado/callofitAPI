@@ -256,17 +256,21 @@ namespace callofitAPI.Security.Controllers
         }
 
         /// <summary>
-        /// Buscar totais de chamados.
+        /// Buscar totais de chamados por usuário logado.
         /// </summary>
         /// <param name="mwChamado"></param>
+        /// /// <param name="request"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpGet("totais")]
-        public async Task<IActionResult> getAllTotaisChamadosAsync([FromServices] ChamadoMW mwChamado)
+        [HttpPost("totais")]
+        public async Task<IActionResult> getAllTotaisChamadosPorUsuarioAsync([FromServices] ChamadoMW mwChamado, [FromBody]RequestTotaisChamados request)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(new ResultViewModel<RequestTotaisChamados>(ModelState.RecuperarErros()));
+
             try
             {
-                var listaTotaisChamados = await mwChamado.getAllTotaisChamadosAsync();
+                var listaTotaisChamados = await mwChamado.getAllTotaisChamadosPorUsuarioAsync(request);
                 if (listaTotaisChamados == null)
                 {
                     return NotFound(
@@ -279,6 +283,42 @@ namespace callofitAPI.Security.Controllers
                 else
                 {
                     return Ok(listaTotaisChamados);
+                }
+            }
+            catch (Exception ex)
+            {
+                Notificar("Falha ao buscar chamados.");
+                return StatusCode(500, Notificacoes());
+            }
+        }
+
+        /// <summary>
+        /// Retorna todos os chamados por usuário logado.
+        /// </summary>
+        /// <param name="mwChamado"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost("chamados-por-usuario")]
+        public async Task<IActionResult> getAllChamadosPorUsuarioAsync([FromServices] ChamadoMW mwChamado, [FromBody] RequestBuscarChamados request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new ResultViewModel<RequestBuscarChamados>(ModelState.RecuperarErros()));
+
+            try
+            {
+                var listaChamados = await mwChamado.getAllChamadosPorUsuarioAsync(request);
+                if (listaChamados == null || listaChamados.Count() == 0)
+                {
+                    return NotFound(
+                       new
+                       {
+                           status = HttpStatusCode.NotFound,
+                           Error = Notificacoes()
+                       });
+                }
+                else
+                {
+                    return Ok(listaChamados);
                 }
             }
             catch (Exception ex)

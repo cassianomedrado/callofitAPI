@@ -6,6 +6,7 @@ using Npgsql;
 using System.Data;
 using netbullAPI.Security.MidwareDB;
 using System;
+using callofitAPI.ViewModels.Chamados;
 
 namespace callofitAPI.Security.DAO
 {
@@ -309,16 +310,16 @@ namespace callofitAPI.Security.DAO
             return retorno;
         }
 
-        public async Task<BuscaTotaisChamados> getAllTotaisChamadosAsync()
+        public async Task<BuscaTotaisChamados> getAllTotaisChamadosPorUsuarioAsync(RequestTotaisChamados request)
         {
             BuscaTotaisChamados chamado = null;
             try
             {
-                string sqlChamado = $@" select distinct (select count(1) from tb_chamados where status_chamado_id = 1 ) as chamadosEmAberto,
-			                                            (select count(1) from tb_chamados where status_chamado_id = 2 ) as chamadosPendentes,
-			                                            (select count(1) from tb_chamados where status_chamado_id = 3 ) as chamadosFinalizados,
-			                                            (select count(1) from tb_chamados where status_chamado_id = 4 ) as chamadosAtrasados
-                                        from tb_chamados ";
+                string sqlChamado = $@" select distinct (select count(1) from tb_chamados where status_chamado_id = 1 and tb_chamados.usuario_id = @usuario_id ) as chamadosEmAberto,
+			                                            (select count(1) from tb_chamados where status_chamado_id = 2 and tb_chamados.usuario_id = @usuario_id ) as chamadosPendentes,
+			                                            (select count(1) from tb_chamados where status_chamado_id = 3 and tb_chamados.usuario_id = @usuario_id  ) as chamadosFinalizados,
+			                                            (select count(1) from tb_chamados where status_chamado_id = 4 and tb_chamados.usuario_id = @usuario_id ) as chamadosAtrasados
+                                        from tb_chamados   ";
 
                 var connection = getConnection();
 
@@ -328,11 +329,14 @@ namespace callofitAPI.Security.DAO
                     sql.CommandType = CommandType.Text;
                     sql.CommandText = sqlChamado;
 
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@usuario_id", request.usuario_id);
+
                     connection.Open();
 
                     using (var transaction = connection.BeginTransaction())
                     {
-                        chamado = await connection.QueryFirstAsync<BuscaTotaisChamados>(sql.CommandText, transaction);
+                        chamado = await connection.QueryFirstAsync<BuscaTotaisChamados>(sql.CommandText, parameters, transaction);
                         transaction.Commit();
                     }
                 }
@@ -343,6 +347,51 @@ namespace callofitAPI.Security.DAO
             {
                 Notificar("Não foi possível recuperar totalizadores de chamados.");
                 return chamado;
+            }
+        }
+
+        public async Task<List<ChamadoModel>> getAllChamadosPorUsuarioAsync(RequestBuscarChamados request)
+        {
+            IEnumerable<ChamadoModel> listaChamado = null;
+            try
+            {
+                string sqlChamado = $@" SELECT * FROM tb_chamados where usuario_id = @usuario_id";
+                var connection = getConnection();
+
+                using (connection)
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@usuario_id", request.usuario_id);
+                    if (request.status_chamado_id != 0)
+                    {
+                        parameters.Add("@status_chamado_id", request.status_chamado_id);
+                        sqlChamado += " and status_chamado_id = @status_chamado_id ";
+                    }
+
+                    NpgsqlCommand sql = connection.CreateCommand();
+                    sql.CommandType = CommandType.Text;
+                    sql.CommandText = sqlChamado;
+
+                    connection.Open();
+
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        listaChamado = await connection.QueryAsync<ChamadoModel>(sql.CommandText, parameters, transaction);
+                        transaction.Commit();
+                    }
+                }
+
+                if (listaChamado == null || listaChamado.Count() == 0)
+                {
+                    Notificar("Não existem chamados.");
+                }
+
+                return listaChamado.ToList();
+            }
+            catch (Exception ex)
+            {
+                Notificar("Não foi possível encontrar chamados.");
+                return listaChamado.ToList();
             }
         }
     }
