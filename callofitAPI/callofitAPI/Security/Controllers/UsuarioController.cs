@@ -252,12 +252,24 @@ namespace callofitAPI.Security.Controllers
 
             try
             {
+                var UsuarioSenhaConfirmada = await mwUser.VerificarUsuarioSenhaAsync(new Usuario() { username = viewModel.username , senha = viewModel.senhaAtual});
+
+                if(UsuarioSenhaConfirmada == null || UsuarioSenhaConfirmada.id == 0)
+                {
+                    return NotFound(
+                      new
+                      {
+                          status = HttpStatusCode.NotFound,
+                          Error = Notificacoes()
+                      });
+                }
+
                 Usuario usu = new Usuario()
                 {
                     id = 0,
                     username = viewModel.username,
                     email = viewModel.email,
-                    senha = viewModel.senha
+                    senha = viewModel.senhaNova
                 };
         
                 var sucess = await mwUser.alterarSenhaAsync(usu);

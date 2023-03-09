@@ -12,13 +12,16 @@ namespace callofitAPI.Security.ViewModels
         [RegularExpression(".+\\@.+\\..+", ErrorMessage = "Informe um email válido...")]
         [StringLength(100, ErrorMessage = "E-mail deve ter no máximo 100 caracteres.")]
         public string email { get; set; }
+        [Required(ErrorMessage = "A senha atual é obrigatória.")]
+        [StringLength(20, MinimumLength = 6, ErrorMessage = "Senha atual deve ter de 6 a 20 caracteres.")]
+        public string senhaAtual { get; set; }
 
         [Required(ErrorMessage = "A senha é obrigatória.")]
-        [StringLength(20, MinimumLength = 6, ErrorMessage = "Senha deve ter de 6 a 20 caracteres.")]
-        public string senha { get; set; }
+        [StringLength(20, MinimumLength = 6, ErrorMessage = "Nova senha deve ter de 6 a 20 caracteres.")]
+        public string senhaNova { get; set; }
 
-        [Required(ErrorMessage = "A confirmação de senha obrigatória.")]
-        [Compare("senha", ErrorMessage = "Senhas não conferem.")]
-        public string confirmaSenha { get; set; }
+        [Required(ErrorMessage = "A confirmação de nova senha é obrigatória.")]
+        [Compare("senhaNova", ErrorMessage = "Senhas não conferem.")]
+        public string confirmaNovaSenha { get; set; }
     }
 }
