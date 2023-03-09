@@ -20,6 +20,7 @@ namespace callofitAPI.ViewModels.Chamados
         [StringLength(500, ErrorMessage = "Ação deve ter no máximo 500 caracteres.")]
         public string descricao_problema { get; set; }
         public int usuario_id { get; set; }
+        public int? tecnico_usuario_id { get; set; }
         public string descricao_solucao { get; set; }
 
         [Required(ErrorMessage = "Id do tipo de chamado é obrigatório.")]
