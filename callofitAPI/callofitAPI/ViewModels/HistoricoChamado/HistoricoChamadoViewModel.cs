@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace callofitAPI.Models
+namespace callofitAPI.ViewModels.HistoricoChamado
 {
     public class HistoricoChamadoViewModel
     {
@@ -15,5 +15,6 @@ namespace callofitAPI.Models
 
         [Required(ErrorMessage = "Id do Chamado é obrigatório.")]
         public int chamados_id { get; set; }
+
     }
 }

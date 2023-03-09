@@ -1,6 +1,7 @@
 ﻿using callofitAPI.Models;
 using callofitAPI.Security.DAO;
 using callofitAPI.ViewModels.Chamados;
+using callofitAPI.ViewModels.HistoricoChamado;
 
 namespace netbullAPI.Security.MidwareDB
 {
@@ -52,9 +53,22 @@ namespace netbullAPI.Security.MidwareDB
             return await _ChamadoDao.putChamadoAsync(chamado);
         }
 
-        public async Task<bool> DeletarChamadoAsync(int id)
+        public async Task<bool> DeletarChamadoAsync(RequestDeleteChamado request)
         {
-            return await _ChamadoDao.DeletarChamadoAsync(id);
+            var result = await _ChamadoDao.DeletarChamadoAsync(request);
+            if (result)
+            {
+                await _historicoChamadoDao.criarHistoricoChamadoAsync(new HistoricoChamadoModel()
+                {
+                    data_criacao = DateTime.Now,
+                    acao = $"Chamado deletado, ID Chamado: {request.chamado_id}",
+                    usuario_id = request.usuario_id,
+                    chamados_id = request.chamado_id
+                });
+
+            }
+
+            return result;
         }
 
         public async Task<BuscaTotaisChamados> getAllTotaisChamadosPorUsuarioAsync(RequestTotaisChamados request)

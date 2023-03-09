@@ -331,5 +331,46 @@ namespace callofitAPI.Security.DAO
             }
             return retorno;
         }
+
+        public async Task<Usuario> RecuperarUsuarioPorIdAsync(Usuario usu)
+        {
+            try
+            {
+                string sqlUser = $@" SELECT * FROM tb_usuario WHERE id = @id";
+                Usuario user;
+
+                var connection = getConnection();
+
+                using (connection)
+                {
+                    NpgsqlCommand sql = connection.CreateCommand();
+                    sql.CommandType = CommandType.Text;
+                    sql.CommandText = sqlUser;
+
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id", usu.id);
+
+                    connection.Open();
+
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        user = await connection.QueryFirstOrDefaultAsync<Usuario>(sql.CommandText, parameters, transaction);
+                        transaction.Commit();
+                    }
+                }
+
+                if (user == null)
+                {
+                    Notificar("Usuário não encontrado.");
+                }
+
+                return user;
+            }
+            catch (Exception ex)
+            {
+                Notificar("Não foi possível recuperar usuario.");
+                return usu;
+            }
+        }
     }
 }

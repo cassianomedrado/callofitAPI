@@ -74,5 +74,27 @@ namespace netbullAPI.Security.MidwareDB
         {
             return await _userDao.InativarUsuarioAsync(id);
         }
+
+        public async Task<RetornarUserViewModel> RecuperarUsuarioPorIdAsync(Usuario usu)
+        {
+            usu = await _userDao.RecuperarUsuarioPorIdAsync(usu);
+
+            RetornarUserViewModel retornoTratado = null;
+            if (usu != null)
+            {
+                retornoTratado = new RetornarUserViewModel()
+                {
+                    id = usu.id,
+                    data_criacao = usu.data_criacao,
+                    nome = usu.nome,
+                    email = usu.email,
+                    tipo_usuario_id = usu.tipo_usuario_id,
+                    username = usu.username,
+                    status = usu.status
+                };
+            }
+
+            return retornoTratado;
+        }
     }
 }

@@ -2,10 +2,9 @@
 
 namespace callofitAPI.Security.ViewModels
 {
-    public class RetornarUserPorUsernameViewModel
+    public class RetornarUserPorUIdViewModel
     {
-        [Required(ErrorMessage = "O nome do usuário é obrigatório.")]
-        [StringLength(60, ErrorMessage = "Username deve ter no máximo 60 caracteres.")]
-        public string username { get; set; }
+        [Required(ErrorMessage = "O usuário é obrigatório.")]
+        public int id { get; set; }
     }
 }

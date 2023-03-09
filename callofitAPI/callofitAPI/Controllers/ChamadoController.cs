@@ -3,6 +3,7 @@ using callofitAPI.Interfaces;
 using callofitAPI.Models;
 using callofitAPI.Util;
 using callofitAPI.ViewModels.Chamados;
+using callofitAPI.ViewModels.HistoricoChamado;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using netbullAPI.Security.MidwareDB;
@@ -225,15 +226,15 @@ namespace callofitAPI.Security.Controllers
         /// Deletar um chamado do sistema passando o ID.
         /// </summary>
         /// <param name="mwChamado"></param>
-        /// <param name="id"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpDelete("delete/{id}")]
-        public async Task<IActionResult> DeletarChamadoAsync([FromServices] ChamadoMW mwChamado, int id)
+        [HttpPost("delete")]
+        public async Task<IActionResult> DeletarChamadoAsync([FromServices] ChamadoMW mwChamado, [FromBody]RequestDeleteChamado request)
         {
             try
             {
-                var sucess = await mwChamado.DeletarChamadoAsync(id);
+                var sucess = await mwChamado.DeletarChamadoAsync(request);
 
                 if (!sucess)
                 {
@@ -319,7 +320,7 @@ namespace callofitAPI.Security.Controllers
                 }
                 else
                 {
-                    return Ok(listaChamados);
+                    return Ok(listaChamados.OrderBy(l => l.id));
                 }
             }
             catch (Exception ex)

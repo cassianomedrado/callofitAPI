@@ -317,5 +317,48 @@ namespace callofitAPI.Security.Controllers
                 return StatusCode(500, Notificacoes());
             }
         }
+
+
+        /// <summary>
+        /// Retorna dados do usuário pelo ID.
+        /// </summary>
+        /// <param name="mwUser"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost("Usuario-por-id")]
+        public async Task<IActionResult> RecuperarUsuarioPorIdAsync([FromServices] UsuarioMW mwUser, [FromBody] RetornarUserPorUIdViewModel request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new ResultViewModel<RetornarUserPorUIdViewModel>(ModelState.RecuperarErros()));
+
+            if (request.id == 0)
+            {
+                return Ok(new RetornarUserViewModel() { id = 0 });
+            }
+
+            try
+            {
+                var usu = await mwUser.RecuperarUsuarioPorIdAsync(new Usuario() { id = request.id });
+                if (usu == null)
+                {
+                    return NotFound(
+                       new
+                       {
+                           status = HttpStatusCode.NotFound,
+                           Error = Notificacoes()
+                       });
+                }
+                else
+                {
+                    return Ok(usu);
+                }
+            }
+            catch (Exception ex)
+            {
+                Notificar("Falha ao usuário.");
+                return StatusCode(500, Notificacoes());
+            }
+        }
     }
 }

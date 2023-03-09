@@ -7,6 +7,7 @@ using System.Data;
 using netbullAPI.Security.MidwareDB;
 using System;
 using callofitAPI.ViewModels.Chamados;
+using callofitAPI.ViewModels.HistoricoChamado;
 
 namespace callofitAPI.Security.DAO
 {
@@ -266,12 +267,12 @@ namespace callofitAPI.Security.DAO
             return retorno;
         }
 
-        public async Task<bool> DeletarChamadoAsync(int id)
+        public async Task<bool> DeletarChamadoAsync(RequestDeleteChamado request)
         {
             var retorno = false;
             try
             {
-                var ChamadoExistente = await getChamadoPorIdAsync(id);
+                var ChamadoExistente = await getChamadoPorIdAsync(request.chamado_id);
                 if (Notificacoes().Count > 0)
                     return retorno;
 
@@ -288,7 +289,7 @@ namespace callofitAPI.Security.DAO
                         sql.CommandText = sqlChamado;
 
                         var parameters = new DynamicParameters();
-                        parameters.Add("@id", id);
+                        parameters.Add("@id", request.chamado_id);
 
                         connection.Open();
 

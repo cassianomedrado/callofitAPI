@@ -2,6 +2,7 @@
 using callofitAPI.Interfaces;
 using callofitAPI.Models;
 using callofitAPI.Util;
+using callofitAPI.ViewModels.HistoricoChamado;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using netbullAPI.Security.MidwareDB;
