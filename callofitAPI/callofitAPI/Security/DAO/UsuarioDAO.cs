@@ -372,5 +372,44 @@ namespace callofitAPI.Security.DAO
                 return usu;
             }
         }
+
+        public async Task<bool> UpdateUsuarioAsync(RetornarUserViewModel usu)
+        {
+            var retorno = false;
+            try
+            {
+                string sqlUser = $@" UPDATE tb_usuario SET nome = @nome, email = @email, tipo_usuario_id = @tipo_usuario_id WHERE id = @id";
+
+                var connection = getConnection();
+
+                using (connection)
+                {
+                    NpgsqlCommand sql = connection.CreateCommand();
+                    sql.CommandType = CommandType.Text;
+                    sql.CommandText = sqlUser;
+
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@nome", usu.nome);
+                    parameters.Add("@email", usu.email);
+                    parameters.Add("@tipo_usuario_id", usu.tipo_usuario_id);
+                    parameters.Add("@id", usu.id);
+
+                    connection.Open();
+
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        connection.Execute(sql.CommandText, parameters, transaction);
+                        transaction.Commit();
+                    }
+                }
+                retorno = true;
+
+            }
+            catch (Exception ex)
+            {
+                Notificar("Nao foi possível alterar a dados do usuário.");
+            }
+            return retorno;
+        }
     }
 }
