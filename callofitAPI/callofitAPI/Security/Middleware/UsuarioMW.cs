@@ -96,5 +96,10 @@ namespace netbullAPI.Security.MidwareDB
 
             return retornoTratado;
         }
+
+        public async Task<bool> UpdateUsuarioAsync(RetornarUserViewModel usu)
+        {
+            return await _userDao.UpdateUsuarioAsync(usu);
+        }
     }
 }

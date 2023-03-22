@@ -372,5 +372,59 @@ namespace callofitAPI.Security.Controllers
                 return StatusCode(500, Notificacoes());
             }
         }
+
+        /// <summary>
+        /// Update de usuário.
+        /// </summary>
+        /// <param name="mwUser"></param>
+        /// <param name="viewModel"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateUsuarioAsync([FromServices] UsuarioMW mwUser, [FromBody] AlterarDadosUserViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new ResultViewModel<AlterarDadosUserViewModel>(ModelState.RecuperarErros()));
+
+            try
+            {
+                var UsuarioRecuperado = await mwUser.RecuperarUsuarioPorIdAsync(new Usuario() { id = viewModel.id });
+
+                if (UsuarioRecuperado == null || UsuarioRecuperado.id == 0)
+                {
+                    return NotFound(
+                      new
+                      {
+                          status = HttpStatusCode.NotFound,
+                          Error = Notificacoes()
+                      });
+                }
+
+                UsuarioRecuperado.nome = String.IsNullOrEmpty(viewModel.nome) ? UsuarioRecuperado.nome : viewModel.nome;
+                UsuarioRecuperado.email = String.IsNullOrEmpty(viewModel.email) ? UsuarioRecuperado.email : viewModel.email;
+                UsuarioRecuperado.tipo_usuario_id = viewModel.tipo_usuario_id == 0  ? UsuarioRecuperado.tipo_usuario_id : viewModel.tipo_usuario_id;
+
+                var sucess = await mwUser.UpdateUsuarioAsync(UsuarioRecuperado);
+
+                if (!sucess)
+                {
+                    return NotFound(
+                       new
+                       {
+                           status = HttpStatusCode.NotFound,
+                           Error = Notificacoes()
+                       });
+                }
+                else
+                {
+                    return Ok();
+                }
+            }
+            catch (Exception ex)
+            {
+                Notificar("Falha ao alterar dados do usuário.");
+                return BadRequest(Notificacoes());
+            }
+        }
     }
 }
