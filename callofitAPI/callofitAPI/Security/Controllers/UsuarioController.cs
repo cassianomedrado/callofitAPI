@@ -379,7 +379,7 @@ namespace callofitAPI.Security.Controllers
         /// <param name="mwUser"></param>
         /// <param name="viewModel"></param>
         /// <returns></returns>
-        [AllowAnonymous]
+        [Authorize]
         [HttpPut("update")]
         public async Task<IActionResult> UpdateUsuarioAsync([FromServices] UsuarioMW mwUser, [FromBody] AlterarDadosUserViewModel viewModel)
         {
