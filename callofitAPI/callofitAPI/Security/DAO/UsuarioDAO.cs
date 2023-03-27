@@ -286,12 +286,12 @@ namespace callofitAPI.Security.DAO
             }
         }
 
-        public async Task<bool> InativarUsuarioAsync(int id)
+        public async Task<bool> AlterarStatusUsuarioAsync(AlterarStatusUserViewModel alterarStatusUser)
         {
             var retorno = false;
             try
             {
-                var usuario = (await getAllUsersAsync()).Where(u => u.id == id).FirstOrDefault();
+                var usuario = (await getAllUsersAsync()).Where(u => u.id == alterarStatusUser.id).FirstOrDefault();
 
                 if (usuario != null)
                 {
@@ -306,7 +306,7 @@ namespace callofitAPI.Security.DAO
                         sql.CommandText = sqlUser;
 
                         var parameters = new DynamicParameters();
-                        parameters.Add("@status", false);
+                        parameters.Add("@status", alterarStatusUser.status);
                         parameters.Add("@id", usuario.id);
 
                         connection.Open();
@@ -327,7 +327,7 @@ namespace callofitAPI.Security.DAO
             }
             catch (Exception ex)
             {
-                Notificar("Nao foi possível alterar a senha do usuário.");
+                Notificar("Nao foi possível alterar status do usuário.");
             }
             return retorno;
         }

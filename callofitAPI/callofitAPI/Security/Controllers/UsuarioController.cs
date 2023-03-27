@@ -296,18 +296,21 @@ namespace callofitAPI.Security.Controllers
         }
 
         /// <summary>
-        /// Inativa um usuário do sistema passando o ID.
+        /// Alterar status de um usuário do sistema.
         /// </summary>
         /// <param name="mwUser"></param>
-        /// <param name="id"></param>
+        /// <param name="alterarStatusUser"></param>
         /// <returns></returns>
-        [Authorize]
-        [HttpPost("inativar/{id}")]
-        public async Task<IActionResult> InativarUserAsync([FromServices] UsuarioMW mwUser, int id)
+        [AllowAnonymous]
+        [HttpPost("alterar-status")]
+        public async Task<IActionResult> AlterarStatusUsuarioAsync([FromServices] UsuarioMW mwUser, [FromBody] AlterarStatusUserViewModel alterarStatusUser)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(new ResultViewModel<AlterarStatusUserViewModel>(ModelState.RecuperarErros()));
+
             try
             {
-                var sucess = await mwUser.InativarUsuarioAsync(id);
+                var sucess = await mwUser.AlterarStatusUsuarioAsync(alterarStatusUser);
 
                 if (!sucess)
                 {
@@ -325,7 +328,7 @@ namespace callofitAPI.Security.Controllers
             }
             catch (Exception ex)
             {
-                Notificar("Falha ao iantivar usuário.");
+                Notificar("Falha ao alterar status do usuário.");
                 return StatusCode(500, Notificacoes());
             }
         }
@@ -379,7 +382,7 @@ namespace callofitAPI.Security.Controllers
         /// <param name="mwUser"></param>
         /// <param name="viewModel"></param>
         /// <returns></returns>
-        [Authorize]
+        [AllowAnonymous]
         [HttpPut("update")]
         public async Task<IActionResult> UpdateUsuarioAsync([FromServices] UsuarioMW mwUser, [FromBody] AlterarDadosUserViewModel viewModel)
         {

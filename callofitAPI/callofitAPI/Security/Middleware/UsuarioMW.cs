@@ -70,9 +70,9 @@ namespace netbullAPI.Security.MidwareDB
             return await _userDao.alterarSenhaAsync(usu);
         }
 
-        public async Task<bool> InativarUsuarioAsync(int id)
+        public async Task<bool> AlterarStatusUsuarioAsync(AlterarStatusUserViewModel alterarStatusUser)
         {
-            return await _userDao.InativarUsuarioAsync(id);
+            return await _userDao.AlterarStatusUsuarioAsync(alterarStatusUser);
         }
 
         public async Task<RetornarUserViewModel> RecuperarUsuarioPorIdAsync(Usuario usu)
