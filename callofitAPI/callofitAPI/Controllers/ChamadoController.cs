@@ -261,7 +261,7 @@ namespace callofitAPI.Security.Controllers
         /// Buscar totais de chamados por usuário logado.
         /// </summary>
         /// <param name="mwChamado"></param>
-        /// /// <param name="request"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [Authorize]
         [HttpPost("totais")]
@@ -295,16 +295,17 @@ namespace callofitAPI.Security.Controllers
         }
 
         /// <summary>
-        /// Retorna todos os chamados por usuário logado.
+        /// Retorna todos os chamados por filtro.
         /// </summary>
         /// <param name="mwChamado"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpPost("chamados-por-usuario")]
+        [HttpPost("chamados-consultar")]
         public async Task<IActionResult> getAllChamadosPorUsuarioAsync([FromServices] ChamadoMW mwChamado, [FromBody] RequestBuscarChamados request)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new ResultViewModel<RequestBuscarChamados>(ModelState.RecuperarErros()));
+            if (request == null)
+                return BadRequest("Campos de busca não informados.");
 
             try
             {

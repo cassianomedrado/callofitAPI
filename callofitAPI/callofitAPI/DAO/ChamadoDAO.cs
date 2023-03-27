@@ -8,6 +8,7 @@ using netbullAPI.Security.MidwareDB;
 using System;
 using callofitAPI.ViewModels.Chamados;
 using callofitAPI.ViewModels.HistoricoChamado;
+using Microsoft.IdentityModel.Tokens;
 
 namespace callofitAPI.Security.DAO
 {
@@ -356,18 +357,31 @@ namespace callofitAPI.Security.DAO
             IEnumerable<ChamadoModel> listaChamado = null;
             try
             {
-                string sqlChamado = $@" SELECT * FROM tb_chamados where usuario_id = @usuario_id";
+                string sqlChamado = $@" SELECT * FROM tb_chamados WHERE 1=1 ";
+
+                if (request.usuario_id != null && request.usuario_id != 0)
+                {
+                    sqlChamado += " AND usuario_id = @usuario_id ";
+                }
+              
+                if (request.status_chamado_id != null && request.status_chamado_id != 0)
+                {
+                    sqlChamado += " AND status_chamado_id = @status_chamado_id ";
+                }
+
+                if (request.tecnico_usuario_id != null && request.tecnico_usuario_id != 0)
+                {
+                    sqlChamado += " AND tecnico_usuario_id = @tecnico_usuario_id ";
+                }
+
                 var connection = getConnection();
 
                 using (connection)
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@usuario_id", request.usuario_id);
-                    if (request.status_chamado_id != 0)
-                    {
-                        parameters.Add("@status_chamado_id", request.status_chamado_id);
-                        sqlChamado += " and status_chamado_id = @status_chamado_id ";
-                    }
+                    parameters.Add("@status_chamado_id", request.status_chamado_id);
+                    parameters.Add("@tecnico_usuario_id", request.tecnico_usuario_id);
 
                     NpgsqlCommand sql = connection.CreateCommand();
                     sql.CommandType = CommandType.Text;
