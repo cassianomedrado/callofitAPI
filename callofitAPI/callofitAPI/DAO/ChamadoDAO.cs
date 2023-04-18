@@ -225,6 +225,7 @@ namespace callofitAPI.Security.DAO
                                                solicitante = @solicitante,
                                                data_limite = @data_limite,
                                                status_chamado_id = @status_chamado_id,
+                                               tecnico_usuario_id = @tecnico_usuario_id,
                                                sistema_suportado_id = @sistema_suportado_id,
                                                descricao_problema = @descricao_problema,
                                                descricao_solucao = @descricao_solucao,
@@ -245,6 +246,7 @@ namespace callofitAPI.Security.DAO
                     parameters.Add("@solicitante", chamado.solicitante);
                     parameters.Add("@data_limite", chamado.data_limite);
                     parameters.Add("@status_chamado_id", chamado.status_chamado_id);
+                    parameters.Add("@tecnico_usuario_id", chamado.tecnico_usuario_id);
                     parameters.Add("@sistema_suportado_id", chamado.sistema_suportado_id);
                     parameters.Add("@descricao_problema", chamado.descricao_problema);
                     parameters.Add("@descricao_solucao", chamado.descricao_solucao);
