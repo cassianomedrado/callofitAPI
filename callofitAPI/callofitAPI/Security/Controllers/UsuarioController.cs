@@ -91,7 +91,7 @@ namespace callofitAPI.Security.Controllers
         /// <param name="mwUser"></param>
         /// <param name="viewModel"></param>
         /// <returns></returns>
-        [AllowAnonymous]
+        [Authorize]
         [HttpPost("registrar")]
         public async Task<IActionResult> RegisterAsync([FromServices] UsuarioMW neUser, 
                                       [FromBody] RegistrarUserViewModel viewModel)
@@ -243,7 +243,7 @@ namespace callofitAPI.Security.Controllers
         /// <param name="mwUser"></param>
         /// <param name="viewModel"></param>
         /// <returns></returns>
-        [AllowAnonymous]
+        [Authorize]
         [HttpPatch("alterarSenha")]
         public async Task<IActionResult> AlterarSenhaAsync([FromServices] UsuarioMW mwUser, [FromBody] AlterarUserSenhaViewModel viewModel)
         {
@@ -301,7 +301,7 @@ namespace callofitAPI.Security.Controllers
         /// <param name="mwUser"></param>
         /// <param name="alterarStatusUser"></param>
         /// <returns></returns>
-        [AllowAnonymous]
+        [Authorize]
         [HttpPost("alterar-status")]
         public async Task<IActionResult> AlterarStatusUsuarioAsync([FromServices] UsuarioMW mwUser, [FromBody] AlterarStatusUserViewModel alterarStatusUser)
         {
@@ -382,7 +382,7 @@ namespace callofitAPI.Security.Controllers
         /// <param name="mwUser"></param>
         /// <param name="viewModel"></param>
         /// <returns></returns>
-        [AllowAnonymous]
+        [Authorize]
         [HttpPut("update")]
         public async Task<IActionResult> UpdateUsuarioAsync([FromServices] UsuarioMW mwUser, [FromBody] AlterarDadosUserViewModel viewModel)
         {
