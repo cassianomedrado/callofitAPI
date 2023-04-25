@@ -1,3 +1,4 @@
+using callofitAPI.Configuration;
 using callofitAPI.Interfaces;
 using callofitAPI.Security.DAO;
 using callofitAPI.Security.Service;
@@ -71,22 +72,7 @@ builder.Services.AddAuthentication(authOptions =>
 });
 
 // INJEÇÃO DE DEPENDENCIAS
-builder.Services.AddScoped<ChamadoMW>();
-builder.Services.AddScoped<HistoricoChamadoMW>();
-builder.Services.AddScoped<SistemaSuportadoMW>();
-builder.Services.AddScoped<StatusChamadoMW>();
-builder.Services.AddScoped<TipoChamadoMW>();
-builder.Services.AddScoped<TipoUsuarioMW>(); 
-builder.Services.AddScoped<UsuarioMW>();
-builder.Services.AddScoped<INotificador, NotificadorMW>();
-builder.Services.AddScoped<ChamadoDAO>();
-builder.Services.AddTransient<HistoricoChamadoDAO>();
-builder.Services.AddTransient<SistemaSuportadoDAO>();
-builder.Services.AddTransient<StatusChamadoDAO>();
-builder.Services.AddTransient<TipoChamadoDAO>();
-builder.Services.AddTransient<TipoUsuarioDAO>();
-builder.Services.AddTransient<UsuarioDAO>();
-builder.Services.AddTransient<TokenService>();
+builder.Services.AddDIConfiguration();
 
 var app = builder.Build();
 

@@ -17,6 +17,7 @@ namespace callofitAPI.ViewModels.Chamados
         [Required(ErrorMessage = "Id do sistema suprotado é obrigatório.")]
         public int sistema_suportado_id { get; set; }
 
+        [Required(ErrorMessage = "Descrição do problema é obrigatório.")]
         [StringLength(500, ErrorMessage = "Ação deve ter no máximo 500 caracteres.")]
         public string descricao_problema { get; set; }
         public int usuario_id { get; set; }
